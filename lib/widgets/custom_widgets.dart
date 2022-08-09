@@ -40,6 +40,11 @@ goto(BuildContext context, Widget nextScreen) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => nextScreen));
 }
 
+goOff(BuildContext context, Widget nextScreen) {
+  Navigator.pushAndRemoveUntil(context,
+      MaterialPageRoute(builder: (context) => nextScreen), (route) => false);
+}
+
 gotoc(BuildContext context, Widget nextScreen) {
   Navigator.push(context, CupertinoPageRoute(builder: (context) => nextScreen));
 }
@@ -56,26 +61,21 @@ goBack(BuildContext context) {
 Widget normalText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(
-      fontSize: size,
-    ),
+    style: TextStyle(fontSize: size, color: white),
   );
 }
 
 Widget boldText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(
-      fontSize: size,
-      fontWeight: FontWeight.bold,
-    ),
+    style: TextStyle(fontSize: size, fontWeight: FontWeight.bold, color: white),
   );
 }
 
 Widget veryBoldText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(fontSize: size, fontWeight: FontWeight.w900),
+    style: TextStyle(fontSize: size, fontWeight: FontWeight.w900, color: white),
     textAlign: TextAlign.center,
   );
 }
@@ -94,19 +94,29 @@ Widget bAppText(String text, double size, Color? color) {
   );
 }
 
+showSnackbar(BuildContext context, String content) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    backgroundColor: white,
+    margin: EdgeInsets.all(15),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    content: nAppText(content, 15, Colors.black),
+  ));
+}
+
 Widget PrimaryMaterialButton(
     BuildContext context, Function fun, String buttonText) {
   return MaterialButton(
     minWidth: fullWidth(context),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    height: 45,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    height: 55,
     color: mc,
     onPressed: () {
       fun();
     },
     child: Text(
       buttonText,
-      style: TextStyle(color: Colors.white, fontSize: 15),
+      style: TextStyle(color: Colors.white, fontSize: 17),
     ),
   );
 }
@@ -115,32 +125,32 @@ Widget SecondaryMaterialButton(Function fun, String buttonText, Color? color,
     double width, Color? textColor) {
   return MaterialButton(
     minWidth: width,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    height: 40,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    height: 50,
     color: color,
     onPressed: () {
       fun();
     },
     child: Text(
       buttonText,
-      style: TextStyle(color: textColor, fontSize: 14),
+      style: TextStyle(color: textColor, fontSize: 19),
     ),
   );
 }
 
 Widget PrimaryOutlineButton(Function fun, String buttonText, double width) {
   return SizedBox(
-    width: 150,
-    height: 40,
+    width: width,
+    height: 50,
     child: OutlinedButton(
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: white),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
       onPressed: () {
         fun();
       },
-      child: nAppText(buttonText, 12, white),
+      child: nAppText(buttonText, 19, white),
     ),
   );
 }

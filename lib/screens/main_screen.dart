@@ -25,11 +25,13 @@ class _AllScreensState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: mc,
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: mc,
           selectedLabelStyle: TextStyle(color: Colors.orange),
-          unselectedLabelStyle: TextStyle(color: black),
+          unselectedLabelStyle: TextStyle(color: white),
           selectedItemColor: Colors.orange,
-          unselectedItemColor: Colors.black,
+          unselectedItemColor: Colors.white,
           iconSize: 32,
           elevation: 0,
           currentIndex: currentIndex,

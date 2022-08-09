@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   form_field_validator: ^1.1.0
   carousel_slider: ^4.1.1
+  firebase_core: 
+  firebase_auth: 
+  cloud_firestore: 
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:

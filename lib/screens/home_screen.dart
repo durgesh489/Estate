@@ -15,12 +15,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: mc,
       
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: AppName(25, false),
+        title: AppName(25, true),
         centerTitle: true,
       ),
       body: Padding(

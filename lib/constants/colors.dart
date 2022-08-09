@@ -10,4 +10,5 @@ Color? darkGreen = Colors.green[700];
 Color green = Colors.green;
 Color? green4 = Colors.green[400];
 Color red = Colors.red;
-Color? mc=Color(0XFFea8a56);
+Color? mc=Color(0XFF142850);
+Color? btnCol=Color(0xff00909e);
