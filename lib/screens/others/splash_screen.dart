@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:estate/screens/on_boarding_screen1.dart';
+import 'package:estate/screens/others/on_boarding_screen1.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 

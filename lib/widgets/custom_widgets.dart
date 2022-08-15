@@ -96,11 +96,11 @@ Widget bAppText(String text, double size, Color? color) {
 
 showSnackbar(BuildContext context, String content) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    backgroundColor: white,
+    backgroundColor: btnCol,
     margin: EdgeInsets.all(15),
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    content: nAppText(content, 15, Colors.black),
+    content: nAppText(content, 15, Colors.white),
   ));
 }
 
@@ -108,9 +108,9 @@ Widget PrimaryMaterialButton(
     BuildContext context, Function fun, String buttonText) {
   return MaterialButton(
     minWidth: fullWidth(context),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-    height: 55,
-    color: mc,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    height: 45,
+    color: btnCol,
     onPressed: () {
       fun();
     },
@@ -176,18 +176,55 @@ showWarningDialog(BuildContext context, String content) {
         );
       });
 }
-
-Widget DrawerItems(Icon icon, String title, Function fun) {
-  return ListTile(
+Widget BackButtonW(BuildContext context,IconData icon) {
+  return IconButton(
+      onPressed: () {
+        goBack(context);
+      },
+      icon: Icon(
+        icon,
+        size: 18,
+        color: white,
+      ));
+}
+Widget DrawerItems(IconData icon, String title, Function fun) {
+  return InkWell(
     onTap: () {
       fun();
     },
-    leading: icon,
-    title: bAppText(title, 17, Colors.brown),
-    trailing: Icon(
-      Icons.arrow_forward_ios,
-      size: 15,
-      color: Colors.brown,
+    child: Column(
+      children: [
+        VSpace(2),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    icon,
+                    color: white,
+                    size: 30,
+                  ),
+                  HSpace(10),
+                  boldText(title, 18),
+                ],
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 15,
+                color: white,
+              ),
+            ],
+          ),
+        ),
+        VSpace(2),
+        Divider(
+          color: white,
+          thickness: 0.7,
+        )
+      ],
     ),
   );
 }

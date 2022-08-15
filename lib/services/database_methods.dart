@@ -8,6 +8,7 @@ class DatabaseMethods {
         .doc(userId)
         .set(userInfoMap);
   }
+
   Future UpdateUserInfoToDB(
       String userId, Map<String, dynamic> userInfoMap) async {
     return await FirebaseFirestore.instance
@@ -15,6 +16,7 @@ class DatabaseMethods {
         .doc(userId)
         .update(userInfoMap);
   }
+
   Future createChatRoom(
       String chatRoomId, Map<String, dynamic> chatRoomInfoMap) async {
     final snapshot = await FirebaseFirestore.instance
@@ -30,13 +32,15 @@ class DatabaseMethods {
           .set(chatRoomInfoMap);
     }
   }
+
   Future searchUser(getPhoneNumber) async {
     return FirebaseFirestore.instance
         .collection("users")
         .where("phoneNumber", isEqualTo: getPhoneNumber)
         .snapshots();
   }
-   Future addMessage(String chatRoomId, String messageId,
+
+  Future addMessage(String chatRoomId, String messageId,
       Map<String, dynamic> messageInfoMap) async {
     return await FirebaseFirestore.instance
         .collection("chatrooms")
@@ -53,6 +57,7 @@ class DatabaseMethods {
         .doc(chatRoomId)
         .update(lastMessageInfoMap);
   }
+
   Future deleteSingleMessage(String chatRoomId, String messageId) async {
     await FirebaseFirestore.instance
         .collection("chatrooms")
@@ -61,6 +66,7 @@ class DatabaseMethods {
         .doc(messageId)
         .delete();
   }
+
   Future updateMessage(String chatRoomId, String messageId,
       Map<String, dynamic> messageInfoMap) async {
     return await FirebaseFirestore.instance
@@ -71,7 +77,6 @@ class DatabaseMethods {
         .update(messageInfoMap);
   }
 
-
   Future<Stream<QuerySnapshot>> getMessages(String chatRoomId) async {
     return FirebaseFirestore.instance
         .collection("chatrooms")
@@ -80,12 +85,32 @@ class DatabaseMethods {
         .orderBy("ls", descending: true)
         .snapshots();
   }
-  Future<Stream<QuerySnapshot>> getChatRoom(String myUserName) async {
-    // String myUserName = await SharedPreference().getStringValuesSF('PR_Auth');
+
+  Future<Stream<QuerySnapshot>> searchCategoriesByLocation(
+      String colName, String location) async {
     return FirebaseFirestore.instance
-        .collection("chatrooms")
-        .where("usersPhoneNumbers", arrayContains: myUserName)
+        .collection(colName)
+        .where("location.city",
+            isGreaterThanOrEqualTo: location.substring(0, 1).toUpperCase() +
+                location.substring(1).toLowerCase())
+        .where("location.city",
+            isLessThan: location.substring(0, 1).toUpperCase() +
+                location.substring(1).toLowerCase() +
+                'z')
         .snapshots();
+  }
+
+  Future<Stream<QuerySnapshot>> searchCategoriesByPrice(
+      String colName, int price) async {
+    return FirebaseFirestore.instance
+        .collection(colName)
+        // .where("price", isGreaterThanOrEqualTo: price+100000)
+        .where("price", isLessThan: price)
+        .snapshots();
+  }
+
+  Future<Stream<QuerySnapshot>> getCollection(String col) async {
+    return FirebaseFirestore.instance.collection(col).snapshots();
   }
 
   Future deleteMessages(String chatRoomId) async {
@@ -100,7 +125,15 @@ class DatabaseMethods {
       }
     });
   }
-
-
-
+  Future updateMessages(String chatRoomId) async {
+    await FirebaseFirestore.instance
+        .collection("chatrooms")
+        .where("DAte",isEqualTo: DateTime.now())
+        .get()
+        .then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.docs) {
+        ds.reference.update({});
+      }
+    });
+  }
 }

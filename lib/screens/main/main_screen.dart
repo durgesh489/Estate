@@ -1,10 +1,11 @@
 import 'package:estate/constants/colors.dart';
-import 'package:estate/screens/cart_screen.dart';
-import 'package:estate/screens/favorite_screen.dart';
-import 'package:estate/screens/home_screen.dart';
-import 'package:estate/screens/profile_screen.dart';
+import 'package:estate/screens/main/land_screen.dart';
+import 'package:estate/screens/main/categories_screen.dart';
+import 'package:estate/screens/main/chat_screen.dart';
+import 'package:estate/screens/main/favorite_screen.dart';
+import 'package:estate/screens/main/home_screen.dart';
+import 'package:estate/screens/main/profile_screen.dart';
 import 'package:flutter/material.dart';
-
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -16,16 +17,16 @@ class MainScreen extends StatefulWidget {
 class _AllScreensState extends State<MainScreen> {
   List screens = [
     HomeScreen(),
-    CartScreen(),
+    CategoriesScreen(),
     FavoriteScreen(),
-   
+    ChatScreen(),
     ProfileScreen(),
   ];
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mc,
+        backgroundColor: mc,
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: mc,
           selectedLabelStyle: TextStyle(color: Colors.orange),
@@ -48,24 +49,28 @@ class _AllScreensState extends State<MainScreen> {
               activeIcon: Icon(Icons.home),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
-              label: "Cart",
-              activeIcon: Icon(Icons.shopping_cart),
+              icon: Icon(Icons.list,size: 35,),
+              label: "Categories",
+              activeIcon: Icon(Icons.list,size: 35),
             ),
-          
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite_outline),
               label: "Favourites",
               activeIcon: Icon(
                 Icons.favorite,
-               
               ),
+            ),
+             BottomNavigationBarItem(
+              icon: Image.asset("assets/chat.png",color: white,width: 32,height: 32,),
+              label: "Chat",
+              activeIcon:  Image.asset("assets/chat.png",color: Colors.orange,width: 32,height: 32,),
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               label: "Profile",
               activeIcon: Icon(Icons.person),
             ),
+           
           ],
         ),
         body: screens[currentIndex]);

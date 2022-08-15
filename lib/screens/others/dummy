@@ -1,0 +1,134 @@
+//  Container(
+  //       child: StreamBuilder(
+  //           stream: categories,
+  //           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  //             return snapshot.hasData
+  //                 ? ListView.builder(
+  //                     itemCount: snapshot.data!.docs.length,
+  //                     itemBuilder: ((context, index) {
+  //                       DocumentSnapshot ds = snapshot.data!.docs[index];
+  //                       return Padding(
+  //                         padding: const EdgeInsets.all(8.0),
+  //                         child: InkWell(
+  //                           onTap: () {
+  //                             if (ds["title"] == "Land") {
+  //                               goto(context, LandScreen());
+  //                             }
+  //                           },
+  //                           child: Stack(
+  //                             alignment: Alignment.center,
+  //                             children: [
+  //                               Container(
+  //                                 color: Colors.grey[800],
+  //                                   width: fullWidth(context),
+  //                                   height: 200,
+  //                                   child: Image.network(
+  //                                     ds["image"],
+  //                                     width: fullWidth(context),
+  //                                     height: 200,
+  //                                     fit: BoxFit.cover,
+  //                                   )),
+  //                               Column(
+  //                                 mainAxisSize: MainAxisSize.max,
+  //                                 mainAxisAlignment:
+  //                                     MainAxisAlignment.spaceBetween,
+  //                                 children: [
+  //                                   VSpace(5),
+  //                                   boldText(
+  //                                       ds["title"].toString().toUpperCase(),
+  //                                       30),
+  //                                   VSpace(80),
+  //                                   Padding(
+  //                                     padding: const EdgeInsets.all(8.0),
+  //                                     child: Row(
+  //                                       mainAxisAlignment:
+  //                                           MainAxisAlignment.spaceBetween,
+  //                                       children: [
+  //                                         Item(
+  //                                             "Total Count", ds["total_count"]),
+  //                                         ds["title"] == "Land" ||
+  //                                                 ds["title"] == "House"
+  //                                             ? Item("For Sale", ds["for_sale"])
+  //                                             : SizedBox(),
+  //                                         Item("For Rent", ds["for_rent"])
+  //                                       ],
+  //                                     ),
+  //                                   )
+  //                                 ],
+  //                               )
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       );
+  //                     }))
+  //                 : Center(child: CircularProgressIndicator());
+  //           })),
+  //     ),
+// VSpace(10),
+
+  // VSpace(20),
+  // Container(
+  //     height: 40,
+  //     child: ListView.builder(
+  //       scrollDirection: Axis.horizontal,
+  //       itemCount: categories.length,
+  //       itemBuilder: (context, index) {
+  //         return NavW(categories[index], index);
+  //       },
+  //     )
+  //     // Row(
+  //     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     //   children: [
+  //     //     Nav("LAND", 0),
+  //     //     Nav("HOUSE", 1),
+  //     //     Nav("ROOMS", 2),
+  //     //     Nav("HOSTELS", 3),
+  //     //   ],
+  //     // ),
+  //     ),
+  // VSpace(20),
+  // Widget FilterBottomSheet() {
+  //   return BottomSheet(
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.only(
+  //             topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+  //       ),
+  //       backgroundColor: mc,
+  //       onClosing: () {},
+  //       builder: (context) {
+  //         return Container(
+  //           height: 300,
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(20.0),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Column(
+  //                   children: [
+  //                     CustomTextField(
+  //                       controller: priceController,
+  //                       validators: [],
+  //                       hintText: "Enter Price",
+  //                     ),
+  //                     VSpace(20),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                       children: [
+  //                         Expanded(child: SaleType("For Sale", 0)),
+  //                         Expanded(child: SaleType("For Rent", 1)),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 PrimaryMaterialButton(context, () async {
+  //                   lands = await DatabaseMethods().searchCategoriesByPrice(
+  //                       "Land", int.parse(priceController.text.toString()));
+  //                   setState(() {});
+  //                   goBack(context);
+  //                 }, "Apply")
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       });
+  // }

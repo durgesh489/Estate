@@ -1,4 +1,7 @@
 import 'package:estate/constants/colors.dart';
+import 'package:estate/screens/authentication/signup_screen.dart';
+import 'package:estate/screens/others/welcome_screen.dart';
+import 'package:estate/services/auth_methods.dart';
 import 'package:estate/widgets/custom_textfield.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -16,20 +19,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mc,
-      
       appBar: AppBar(
         automaticallyImplyLeading: false,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: AppName(25, true),
-        centerTitle: true,
+        title: normalText("Estate", 22),
+        actions: [
+          IconButton(
+            onPressed: () {
+             
+            },
+            icon: Icon(Icons.notifications_outlined,color: white,size: 30,),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              CustomTextField(controller: searchController, validators: [],hintText: "Search Home",)
+              CustomTextField(
+                controller: searchController,
+                validators: [],
+                hintText: "Search Home",
+              )
 
               // VSpace(20),
               // Row(

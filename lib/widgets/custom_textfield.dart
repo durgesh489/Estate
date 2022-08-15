@@ -9,6 +9,7 @@ class CustomTextField extends StatefulWidget {
   bool isPassword = false;
   int maxLines;
   Color color;
+ 
 
   TextInputType keyboardType;
   CustomTextField(
@@ -19,7 +20,7 @@ class CustomTextField extends StatefulWidget {
       this.isPassword = false,
       this.maxLines = 1,
       this.keyboardType = TextInputType.text,
-      this.color = Colors.black})
+      this.color = Colors.black,})
       : super(key: key);
 
   @override
@@ -34,53 +35,49 @@ class _CustomTextFieldState extends State<CustomTextField> {
       children: [
         Container(
           height: 45,
-          
           decoration: BoxDecoration(
-            color: white,
-            borderRadius: BorderRadius.circular(10)
-          ),
-         
+              color: white, borderRadius: BorderRadius.circular(10)),
         ),
         TextFormField(
-            textAlignVertical: TextAlignVertical.center,
-            style: TextStyle(color: widget.color),
-            keyboardType: widget.keyboardType,
-            validator: MultiValidator(widget.validators),
-            controller: widget.controller,
-            maxLines: widget.maxLines,
-            obscureText: widget.isPassword
-                ? isHide
-                    ? true
-                    : false
-                : false,
-            decoration: InputDecoration(
-                hintText: widget.hintText,
-                contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                hintStyle: TextStyle(color: grey),
-                errorStyle: TextStyle(color: white),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color),
-                    borderRadius: BorderRadius.circular(10)),
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color),
-                    borderRadius: BorderRadius.circular(10)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color),
-                    borderRadius: BorderRadius.circular(10)),
-                // border: InputBorder.none,
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isHide = !isHide;
-                          });
-                        },
-                        icon: Icon(
-                          isHide ? Icons.visibility_off : Icons.visibility,
-                          color: grey,
-                        ))
-                    : null),
-          )
+          textAlignVertical: TextAlignVertical.center,
+          style: TextStyle(color: widget.color),
+          keyboardType: widget.keyboardType,
+          validator: MultiValidator(widget.validators),
+          controller: widget.controller,
+          maxLines: widget.maxLines,
+          obscureText: widget.isPassword
+              ? isHide
+                  ? true
+                  : false
+              : false,
+          decoration: InputDecoration(
+              hintText: widget.hintText,
+              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+              hintStyle: TextStyle(color: grey),
+              errorStyle: TextStyle(color: white),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: widget.color),
+                  borderRadius: BorderRadius.circular(10)),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: widget.color),
+                  borderRadius: BorderRadius.circular(10)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: widget.color),
+                  borderRadius: BorderRadius.circular(10)),
+              // border: InputBorder.none,
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isHide = !isHide;
+                        });
+                      },
+                      icon: Icon(
+                        isHide ? Icons.visibility_off : Icons.visibility,
+                        color: grey,
+                      ))
+                  : null),
+        )
       ],
     );
   }

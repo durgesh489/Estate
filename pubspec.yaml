@@ -40,6 +40,9 @@ dependencies:
   firebase_auth: 
   cloud_firestore: 
   shared_preferences:
+  google_sign_in:
+  video_player: ^2.4.2
+  video_player_web_hls: ^0.1.1
 
 dev_dependencies:
   flutter_test:

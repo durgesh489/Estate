@@ -1,8 +1,7 @@
 import 'package:estate/constants/colors.dart';
-import 'package:estate/screens/change_password_screen.dart';
-import 'package:estate/screens/forgot_password_screen.dart';
-import 'package:estate/screens/main_screen.dart';
-import 'package:estate/screens/signup_screen.dart';
+import 'package:estate/main.dart';
+import 'package:estate/screens/authentication/login_screen.dart';
+import 'package:estate/screens/main/main_screen.dart';
 import 'package:estate/services/database_methods.dart';
 import 'package:estate/widgets/custom_textfield.dart';
 import 'package:estate/widgets/custom_widgets.dart';
@@ -10,45 +9,46 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-class LogInScreen extends StatefulWidget {
-  const LogInScreen({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<LogInScreen> createState() => _SignUpScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<LogInScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailController = TextEditingController();
-
+  TextEditingController confirmPswrdController = TextEditingController();
   TextEditingController pswrdController = TextEditingController();
+  GlobalKey<FormState> signUpKey = GlobalKey<FormState>();
   bool showCPI = false;
-  GlobalKey<FormState> loginKey = GlobalKey<FormState>();
-  signInWithEmailAndPassword() async {
+  Future signUpWithEmailAndPassword() async {
     setState(() {
       showCPI = true;
     });
     try {
-      var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      var result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text, password: pswrdController.text);
       User? user = result.user;
-
       if (user != null) {
-        try {
-       goOff(context, MainScreen());
-            showSnackbar(
-                context, "Login Successfully Welcome to Estate");
-        } catch (e) {
-          setState(() {
-            showCPI = false;
-          });
+         prefs!.setString("id", user.uid);
+          prefs!.setString("name", user.displayName??"unknown");
+          prefs!.setString("profile", user.photoURL??"unknown");
 
-          showSnackbar(context, e.toString());
-        }
+          prefs!.setString("email", emailController.text);
+          prefs!.setString("password", pswrdController.text);
+          prefs!.setBool("islogin", true);
+        DatabaseMethods().addUserInfoToDB(
+            user.uid, {"email": emailController.text}).then((value) {
+          goOff(context, MainScreen());
+          showSnackbar(context, "Registration Successfully Welcome to Estate");
+        });
       }
     } catch (e) {
       setState(() {
         showCPI = false;
       });
+      print(e);
       showSnackbar(context, e.toString());
     }
   }
@@ -65,7 +65,7 @@ class _SignUpScreenState extends State<LogInScreen> {
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
               child: Form(
-                key: loginKey,
+                key: signUpKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -96,30 +96,39 @@ class _SignUpScreenState extends State<LogInScreen> {
                       hintText: "Enter Password",
                       isPassword: true,
                     ),
-
-                    VSpace(60),
+                    VSpace(10),
+                    CustomTextField(
+                      controller: confirmPswrdController,
+                      validators: [
+                        RequiredValidator(errorText: "This Field is Required"),
+                        MinLengthValidator(8,
+                            errorText: "Password should be atleast 8 digits")
+                      ],
+                      hintText: "Confirm Password",
+                      isPassword: true,
+                    ),
+                    VSpace(40),
                     showCPI
                         ? CircularProgressIndicator()
                         : SecondaryMaterialButton(() {
-                            if (loginKey.currentState!.validate()) {
-                              signInWithEmailAndPassword();
+                            if (signUpKey.currentState!.validate() &&
+                                pswrdController.text.toString() ==
+                                    confirmPswrdController.text.toString()) {
+                              signUpWithEmailAndPassword();
+                            } else if (pswrdController.text.toString() !=
+                                confirmPswrdController.text.toString()) {
+                              showSnackbar(context, "Password do not match");
                             } else {
                               showSnackbar(
                                   context, "Pleasefill all fields correctly");
                             }
-                          }, "LOGIN", btnCol, 220, white),
-                    VSpace(10),
+                          }, "SIGN UP", btnCol, 220, white),
+                    VSpace(15),
                     TextButton(
                         onPressed: () {
                           goto(context, LogInScreen());
                         },
-                        child: normalText("Forgot Password?", 18)),
-                    // VSpace(10),
-                    TextButton(
-                        onPressed: () {
-                          goto(context, SignUpScreen());
-                        },
-                        child: normalText("Register?", 18)),
+                        child: normalText("Already Registered?", 18))
                   ],
                 ),
               ),

@@ -1,7 +1,7 @@
 import 'package:estate/constants/colors.dart';
-import 'package:estate/screens/login_screen.dart';
-import 'package:estate/screens/on_boarding_screen1.dart';
-import 'package:estate/screens/signup_screen.dart';
+import 'package:estate/screens/authentication/login_screen.dart';
+import 'package:estate/screens/others/on_boarding_screen1.dart';
+import 'package:estate/screens/authentication/signup_screen.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -29,11 +29,11 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
             },
             children: [
               DemoScreen("WELCOME", "welcome1",
-                  "Showcase your property for sale. and find the buyer easily"),
+                  "Showcase your property for sale. and find the buyer easily","NEXT >>"),
               DemoScreen("OUR REACH", "welcome2",
-                  "Available in 3 major city Kathmandu ,Bhaktapur and Lalitpur"),
+                  "Available in 3 major city Kathmandu ,Bhaktapur and Lalitpur","NEXT >>"),
               DemoScreen(
-                  "OTHER SERVICES", "welcome3", "Find Room and Flat to Rent")
+                  "OTHER SERVICES", "welcome3", "Find Room and Flat to Rent","SKIP >>")
             ],
           ),
           Padding(
@@ -81,7 +81,7 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
     );
   }
 
-  Widget DemoScreen(String title, String img, String content) {
+  Widget DemoScreen(String title, String img, String content,String btnText) {
     return Container(
       width: fullWidth(context),
       height: fullHeight(context),

@@ -1,6 +1,7 @@
 import 'package:estate/constants/colors.dart';
-import 'package:estate/screens/login_screen.dart';
-import 'package:estate/screens/signup_screen.dart';
+import 'package:estate/screens/authentication/login_screen.dart';
+import 'package:estate/screens/main/main_screen.dart';
+import 'package:estate/screens/authentication/signup_screen.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 
 import 'package:flutter/material.dart';
@@ -25,7 +26,9 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  goOff(context, MainScreen());
+                },
                 child: normalText("Continue without logging in >>", 17),
               ),
               VSpace(100),
