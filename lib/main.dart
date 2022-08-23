@@ -22,9 +22,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // backgroundColor:mc,
-        primaryColor: Colors.blue[900],
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.green[900],
+        primarySwatch: Colors.green,
+        backgroundColor: Colors.grey,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.grey[200],
+          elevation: 0
+        ),
+        textTheme: TextTheme(
+          bodyText1: TextStyle(),
+          bodyText2: TextStyle(),
+        ).apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+        ),
       ),
       home: FutureBuilder(
           future: AuthMethods().getCurrentUser(),

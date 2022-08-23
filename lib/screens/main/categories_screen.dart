@@ -19,14 +19,17 @@ class CategoriesScreen extends StatefulWidget {
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> {
+class _CategoriesScreenState extends State<CategoriesScreen>
+    with SingleTickerProviderStateMixin {
   int selected = 0;
   int saleTypeIndex = -1;
   int selectedImage = 0;
   double selectedPrice = 250000;
+  TabController? tabController;
   // var categories;
 
   List<String> categories = ["Land", "House", "Room", "Hostel"];
+  List<String> categoriesIcons = ["Field", "Apartment", "Room", "Bunk Bed"];
   TextEditingController searchController = TextEditingController();
 
   Future fetchCategories() async {
@@ -39,6 +42,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    tabController = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: 0,
+    );
     fetchCategories();
   }
 
@@ -46,82 +54,105 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     List navs = [Lands(), Houses(), Rooms(), Lands()];
     return Scaffold(
-      backgroundColor: mc,
-      appBar: AppBar(
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        backgroundColor: mc,
-        title: Row(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    height: 45,
-                    decoration: BoxDecoration(
-                        color: white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: white)),
-                  ),
-                  TextField(
-                    onChanged: (val) async {
-                      if (val == "") {
-                        fetchCategories();
-                        setState(() {});
-                      } else {
-                        lands = await DatabaseMethods()
-                            .searchCategoriesByLocation(
-                                categories[selected], val);
-                        setState(() {});
-                      }
-                    },
-                    textAlignVertical: TextAlignVertical.center,
-                    controller: searchController,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                        hintText: "Location",
-                        suffixIcon: Icon(Icons.search)),
-                  ),
-                ],
+        backgroundColor: grey2,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: boldText("Real Estate", 20),
+          ),
+          iconTheme: IconThemeData(color: black),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.chat_bubble_outline,
+                size: 27,
               ),
             ),
-            HSpace(10),
-            InkWell(
-              onTap: () {
-                show();
-              },
-              child: Container(
-                width: 45,
-                height: 45,
-                decoration: BoxDecoration(
-                    border: Border.all(color: white),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Image.asset(
-                  "assets/filter.png",
-                  color: white,
-                ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications_outlined,
+                size: 27,
               ),
-            )
+            ),
+            HSpace(12),
           ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(110),
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    SizedBox(
+                      height: 55,
+                      width: fullWidth(context),
+                      child: Card(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                        shadowColor: black,
+                        color: white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ),
+                    TextField(
+                      onChanged: (val) async {
+                        if (val == "") {
+                          fetchCategories();
+                          setState(() {});
+                        } else {
+                          lands = await DatabaseMethods()
+                              .searchCategoriesByLocation(
+                                  categories[selected], val);
+                          setState(() {});
+                        }
+                      },
+                      textAlignVertical: TextAlignVertical.center,
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(30),
+                        //     borderSide: BorderSide(color: black)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 35, vertical: 0),
+
+                        hintText: "Search Location...",
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            show();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 25),
+                            child: Image.asset(
+                              "assets/filter.png",
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                VSpace(8),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (int i = 0; i < navs.length; i++)
+                          NavW(categories[i], i, categoriesIcons[i])
+                      ],
+                    ))
+              ],
+            ),
+          ),
         ),
-        bottom: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-              height: 40,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  return NavW(categories[index], index);
-                },
-              ),
-            )),
-      ),
-      body: navs[selected],
-    );
+        body: navs[selected]);
   }
 
   //
@@ -153,7 +184,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         });
   }
 
-  Widget NavW(String title, int index) {
+  Widget NavW(String title, int index, String icon) {
     return InkWell(
         onTap: () {
           setState(() {
@@ -161,26 +192,33 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             fetchCategories();
           });
         },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Container(
-            width: 150,
-            height: 40,
-            decoration: BoxDecoration(
-                color: selected == index ? btnCol : Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: white)),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
+        child: Container(
+          height: 58,
+          child: Column(
+            children: [
+              Image.asset(
+                "assets/$icon.png",
+                width: 25,
+                height: 25,
+                color: selected == index ? green : Colors.black54,
               ),
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(color: white, fontSize: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: selected == index ? green : black,
                 ),
               ),
-            ),
+              selected == index
+                  ? SizedBox(
+                      width: 50,
+                      child: Divider(
+                        color: selected == index ? green : black,
+                        thickness: 2,
+                      ),
+                    )
+                  : SizedBox()
+            ],
           ),
         ));
   }
@@ -207,13 +245,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   Widget Lands() {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: StreamBuilder(
           stream: lands,
           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
             return snapshot.hasData
                 ? snapshot.data!.docs.length == 0
-                    ? Center(child: bAppText("Not Found", 16, white))
+                    ? Center(child: normalText("Not Found", 16))
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
@@ -221,41 +259,40 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         itemBuilder: ((context, index) {
                           DocumentSnapshot ds = snapshot.data!.docs[index];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
+                            padding: const EdgeInsets.only(bottom: 8.0),
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                goto(
+                                    context,
+                                    DetailScreen(
+                                      ds: ds,
+                                    ));
+                              },
                               child: Card(
                                 margin: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                elevation: 10,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    LocationAndFavorite(
-                                        ds, ds["location"]["city"]),
-                                    Images(ds, ds["sale_type"]),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          PriceAndArea(
-                                              ds["price"],
-                                              ds["land_area"].toString(),
-                                              ds["land_type"].toString(),
-                                              ds["land_video"]),
-                                          VSpace(15),
-                                          NearestLandmarks(ds),
-                                          VSpace(15),
-                                          CallAndChatButton()
-                                        ],
-                                      ),
-                                    ),
-                                    VSpace(10),
-                                  ],
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(color: Colors.black12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Images(ds, ds["sale_type"]),
+                                      VSpace(10),
+                                      LocationAndVideo(ds, ds["land_video"]),
+                                      VSpace(10),
+                                      PriceAndArea(
+                                          ds["price"],
+                                          ds["land_area"].toString(),
+                                          ds["land_type"].toString(),
+                                          ds["land_video"]),
+                                      VSpace(12),
+                                      NearestLandmarks(ds),
+                                      VSpace(12)
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -264,7 +301,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       )
                 : Center(
                     child: CircularProgressIndicator(
-                    color: white,
+                    color: green,
                   ));
           })),
     );
@@ -272,13 +309,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   Widget Houses() {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: StreamBuilder(
           stream: lands,
           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
             return snapshot.hasData
                 ? snapshot.data!.docs.length == 0
-                    ? Center(child: bAppText("Not Found", 16, white))
+                    ? Center(child: normalText("Not Found", 16))
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
@@ -286,41 +323,34 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         itemBuilder: ((context, index) {
                           DocumentSnapshot ds = snapshot.data!.docs[index];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 15.0),
+                            padding: const EdgeInsets.only(bottom: 8.0),
                             child: InkWell(
                               onTap: () {},
                               child: Card(
                                 margin: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                elevation: 10,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    LocationAndFavorite(
-                                        ds, ds["location"]["city"]),
-                                    Images(ds, ds["sale_type"]),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          PriceAndArea(
-                                              int.parse(ds["price"].toString()),
-                                              ds["land_area"].toString(),
-                                              ds["land_type"].toString(),
-                                              ds["house_video"]),
-                                          VSpace(15),
-                                          NearestLandmarks(ds),
-                                          VSpace(15),
-                                          CallAndChatButton()
-                                        ],
-                                      ),
-                                    ),
-                                    VSpace(10),
-                                  ],
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(color: Colors.black12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Images(ds, ds["sale_type"]),
+                                      VSpace(10),
+                                      LocationAndVideo(ds, ds["house_video"]),
+                                      VSpace(12),
+                                      PriceAndArea(
+                                          int.parse(ds["price"].toString()),
+                                          ds["land_area"].toString(),
+                                          ds["land_type"].toString(),
+                                          ds["house_video"]),
+                                      VSpace(12),
+                                      NearestLandmarks(ds),
+                                      VSpace(10),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -343,7 +373,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
             return snapshot.hasData
                 ? snapshot.data!.docs.length == 0
-                    ? Center(child: bAppText("Not Found", 16, white))
+                    ? Center(child: normalText("Not Found", 16))
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: ScrollPhysics(),
@@ -357,35 +387,25 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               child: Card(
                                 margin: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                elevation: 10,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    LocationAndFavorite(
-                                        ds, ds["location"]["city"]),
-                                    Images(ds, ds["room_type"]),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // PriceAndArea(
-                                          //     ds["price"],
-                                          //     ds["land_area"].toString(),
-                                          //     ds["land_type"].toString(),
-                                          //     ds["house_video"]),
-                                          VSpace(15),
-                                          NearestLandmarks(ds),
-                                          VSpace(15),
-                                          CallAndChatButton()
-                                        ],
-                                      ),
-                                    ),
-                                    VSpace(10),
-                                  ],
+                                    borderRadius: BorderRadius.circular(15),
+                                    side: BorderSide(color: Colors.black12)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Images(ds, ds["room_type"]),
+                                      VSpace(10),
+                                      PriceAndArea(1000000, ds["room_type"],
+                                          ds["room_type"], ds["room_video"]),
+                                      VSpace(12),
+                                      LocationAndVideo(ds, ds["room_video"]),
+                                      VSpace(12),
+                                      NearestLandmarks(ds),
+                                      VSpace(10),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -400,132 +420,54 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     );
   }
 
-  Widget CallAndChatButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        MaterialButton(
-          minWidth: 150,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          height: 45,
-          color: btnCol,
-          onPressed: () {},
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.call,
-                color: white,
-              ),
-              HSpace(10),
-              bAppText("Call", 18, white)
-            ],
-          ),
-        ),
-        SizedBox(
-          width: 150,
-          height: 45,
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: black),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-            ),
-            onPressed: () {},
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/chat.png",
-                  width: 30,
-                  height: 30,
-                ),
-                HSpace(10),
-                bAppText("Chat", 18, black)
-              ],
-            ),
-          ),
-        )
-      ],
-    );
-  }
+  //
 
   Widget VideoButton(String videoUrl) {
     return InkWell(
-      onTap: () {
-        goto(
-            context,
-            PlayVideoScreeen(
-              videoUrl: videoUrl,
-            ));
-      },
-      child: Image.asset(
-        "assets/video.png",
-        color: grey,
-      ),
-    );
+        onTap: () {
+          goto(
+              context,
+              PlayVideoScreeen(
+                videoUrl: videoUrl,
+              ));
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border.all(width: 1),
+              borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                nAppText("Video Tour", 14, black),
+                HSpace(5),
+                Icon(
+                  Icons.play_circle,
+                  color: grey,
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 
-  Widget LocationAndFavorite(DocumentSnapshot ds, String city) {
-    List<String> l = prefs!.getStringList("favorites") ?? [];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.location_on,
-                size: 30,
-              ),
-              HSpace(5),
-              nAppText(city, 20, black),
-            ],
-          ),
-          InkWell(
-            onTap: () async {
-              bool checkLogin = prefs!.getBool("islogin") ?? false;
-              if (checkLogin) {
-                Map<String, dynamic> data = ds.data() as Map<String, dynamic>;
-
-                if (l.contains(ds.id)) {
-                  await FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(prefs!.getString("id"))
-                      .collection(categories[selected])
-                      .doc(ds.id)
-                      .delete();
-                  l.remove(ds.id);
-                  showSnackbar(context, "Removed From Favourites Successfully");
-                } else {
-                  await FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(prefs!.getString("id"))
-                      .collection(categories[selected])
-                      .doc(ds.id)
-                      .set(data);
-                  l.add(ds.id);
-                  showSnackbar(context, "Added In Favourites Successfully");
-                }
-
-                prefs!.setStringList("favorites", l);
-
-                setState(() {});
-              } else {
-                showSnackbar(context,
-                    "${categories[selected]} cannot be added Please Login First ");
-              }
-            },
-            child: Icon(
-              l.contains(ds.id) ? Icons.favorite : Icons.favorite_outline,
-              size: 30,
-              color: red,
+  Widget LocationAndVideo(DocumentSnapshot ds, String videoUrl) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.location_on_outlined,
+              size: 25,
+              color: green,
             ),
-          )
-        ],
-      ),
+            HSpace(5),
+            nAppText(ds["location"]["city"], 17, black),
+          ],
+        ),
+        VideoButton(videoUrl)
+      ],
     );
   }
 
@@ -549,22 +491,25 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                bAppText("Price: " + "Rs. " + price.toString(), 20, black),
+                bAppText(" ₹ ", 20, black),
+                bAppText(
+                    price.toString() + " / " + area + " " + type, 18, black),
               ],
             ),
-            VSpace(3),
-            bAppText("Area: " + area + " " + type, 18, black),
           ],
         ),
-        VideoButton(videoUrl)
       ],
     );
   }
 
   Widget Images(DocumentSnapshot ds, String type) {
+    List<String> l = prefs!.getStringList("favorites") ?? [];
     return Container(
+      decoration: BoxDecoration(
+        color: grey2,
+        borderRadius: BorderRadius.circular(20),
+      ),
       height: 220,
       child: Stack(
         children: [
@@ -575,44 +520,141 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             },
             children: [
               for (int i = 0; i < ds["info_images"].length; i++)
-                Image.network(
-                  ds["info_images"][i],
-                  width: fullWidth(context),
-                  height: 220,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                    ds["info_images"][i],
+                    width: fullWidth(context),
+                    height: 220,
+                    fit: BoxFit.cover,
+                  ),
                 )
             ],
           ),
           Align(
             alignment: Alignment.topLeft,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                  child: bAppText(type.toUpperCase(), 16, white),
-                ),
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      bool checkLogin = prefs!.getBool("islogin") ?? false;
+                      if (checkLogin) {
+                        Map<String, dynamic> data =
+                            ds.data() as Map<String, dynamic>;
+
+                        if (l.contains(ds.id)) {
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(prefs!.getString("id"))
+                              .collection(categories[selected])
+                              .doc(ds.id)
+                              .delete();
+                          l.remove(ds.id);
+                          showSnackbar(
+                              context, "Removed From Favourites Successfully");
+                        } else {
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(prefs!.getString("id"))
+                              .collection(categories[selected])
+                              .doc(ds.id)
+                              .set(data);
+                          l.add(ds.id);
+                          showSnackbar(
+                              context, "Added In Favourites Successfully");
+                        }
+
+                        prefs!.setStringList("favorites", l);
+
+                        setState(() {});
+                      } else {
+                        showSnackbar(context,
+                            "${categories[selected]} cannot be added Please Login First ");
+                      }
+                    },
+                    child: Card(
+                      elevation: 20,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Icon(
+                          l.contains(ds.id)
+                              ? Icons.favorite
+                              : Icons.favorite_outline,
+                          size: 25,
+                          color: red,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 20,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.call,
+                        size: 25,
+                        color: green,
+                      ),
+                    ),
+                  ),
+                  Card(
+                    elevation: 20,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Image.asset(
+                        "assets/chat.png",
+                        width: 25,
+                        height: 25,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ),
+          // Align(
+          //   alignment: Alignment.topLeft,
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: Container(
+          //       decoration: BoxDecoration(
+          //         color: Colors.orange,
+          //         borderRadius: BorderRadius.circular(10),
+          //       ),
+          //       child: Padding(
+          //         padding:
+          //             const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+          //         child: bAppText(type.toUpperCase(), 16, white),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < ds["info_images"].length; i++)
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 5),
-                    width: selectedImage == i ? 8 : 6,
-                    height: selectedImage == i ? 8 : 6,
-                    decoration: BoxDecoration(
-                        color: Colors.grey, shape: BoxShape.circle),
-                  )
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (int i = 0; i < ds["info_images"].length; i++)
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 5),
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                          color: selectedImage == i ? grey : Colors.white,
+                          shape: BoxShape.circle),
+                    )
+                ],
+              ),
             ),
           ),
         ],
@@ -623,9 +665,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget IconWithText(String icon, String text) {
     return Column(
       children: [
-        Image.asset("assets/$icon.png"),
+        Image.asset(
+          "assets/$icon.png",
+          color: Colors.black54,
+          width: 25,
+          height: 25,
+        ),
         VSpace(5),
-        bAppText(text, 18, black)
+        bAppText(text, 16, black)
       ],
     );
   }

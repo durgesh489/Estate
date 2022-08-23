@@ -17,7 +17,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mc,
+      backgroundColor: grey2,
       body: SafeArea(
         child: Container(
           width: fullWidth(context),
@@ -40,7 +40,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
               VSpace(50),
               SecondaryMaterialButton(() {
                 goto(context, LogInScreen());
-              }, "LOGIN", btnCol, 220, white),
+              }, "LOGIN", 220),
               VSpace(20),
               PrimaryOutlineButton(() {
                 goto(context, SignUpScreen());

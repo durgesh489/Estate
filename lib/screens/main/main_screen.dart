@@ -19,20 +19,20 @@ class _AllScreensState extends State<MainScreen> {
     HomeScreen(),
     CategoriesScreen(),
     FavoriteScreen(),
-    ChatScreen(),
+    
     ProfileScreen(),
   ];
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: mc,
+       
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: mc,
-          selectedLabelStyle: TextStyle(color: Colors.orange),
-          unselectedLabelStyle: TextStyle(color: white),
-          selectedItemColor: Colors.orange,
-          unselectedItemColor: Colors.white,
+          backgroundColor: white,
+          selectedLabelStyle: TextStyle(color: Colors.green),
+          unselectedLabelStyle: TextStyle(color: black),
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.black,
           iconSize: 32,
           elevation: 0,
           currentIndex: currentIndex,
@@ -60,11 +60,11 @@ class _AllScreensState extends State<MainScreen> {
                 Icons.favorite,
               ),
             ),
-             BottomNavigationBarItem(
-              icon: Image.asset("assets/chat.png",color: white,width: 32,height: 32,),
-              label: "Chat",
-              activeIcon:  Image.asset("assets/chat.png",color: Colors.orange,width: 32,height: 32,),
-            ),
+            //  BottomNavigationBarItem(
+            //   icon: Image.asset("assets/chat.png",color: white,width: 32,height: 32,),
+            //   label: "Chat",
+            //   activeIcon:  Image.asset("assets/chat.png",color: Colors.orange,width: 32,height: 32,),
+            // ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               label: "Profile",

@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController confirmPswrdController = TextEditingController();
   TextEditingController pswrdController = TextEditingController();
+   TextEditingController nameController = TextEditingController();
   GlobalKey<FormState> signUpKey = GlobalKey<FormState>();
   bool showCPI = false;
   Future signUpWithEmailAndPassword() async {
@@ -32,9 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       User? user = result.user;
       if (user != null) {
          prefs!.setString("id", user.uid);
-          prefs!.setString("name", user.displayName??"unknown");
-          prefs!.setString("profile", user.photoURL??"unknown");
-
+          prefs!.setString("name", nameController.text);
+         
           prefs!.setString("email", emailController.text);
           prefs!.setString("password", pswrdController.text);
           prefs!.setBool("islogin", true);
@@ -56,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mc,
+      backgroundColor: grey2,
       body: SafeArea(
         child: Container(
           width: fullWidth(context),
@@ -72,10 +72,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     VSpace(40),
                     Image.asset(
                       "assets/logo.png",
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                     ),
-                    VSpace(40),
+                    VSpace(30),
+                    CustomTextField(
+                      controller:nameController,
+                      validators: [
+                        RequiredValidator(errorText: "This Field is Required"),
+                       
+                      ],
+                      hintText: "Enter Name",
+                  
+                    ),
+                    VSpace(10),
                     CustomTextField(
                       controller: emailController,
                       validators: [
@@ -110,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     VSpace(40),
                     showCPI
                         ? CircularProgressIndicator()
-                        : SecondaryMaterialButton(() {
+                        : PrimaryMaterialButton(context,() {
                             if (signUpKey.currentState!.validate() &&
                                 pswrdController.text.toString() ==
                                     confirmPswrdController.text.toString()) {
@@ -120,15 +130,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               showSnackbar(context, "Password do not match");
                             } else {
                               showSnackbar(
-                                  context, "Pleasefill all fields correctly");
+                                  context, "Please fill all fields correctly");
                             }
-                          }, "SIGN UP", btnCol, 220, white),
+                          }, "SIGN UP"),
                     VSpace(15),
-                    TextButton(
-                        onPressed: () {
-                          goto(context, LogInScreen());
-                        },
-                        child: normalText("Already Registered?", 18))
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        normalText("Already Registered ?", 17),
+                        TextButton(
+                            onPressed: () {
+                              gotoWithoutBack(context, LogInScreen());
+                            },
+                            child: nAppText("Login", 17,green)),
+                      ],
+                    )
                   ],
                 ),
               ),

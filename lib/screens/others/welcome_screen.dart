@@ -1,5 +1,6 @@
 import 'package:estate/constants/colors.dart';
 import 'package:estate/screens/authentication/login_screen.dart';
+import 'package:estate/screens/main/main_screen.dart';
 import 'package:estate/screens/others/on_boarding_screen1.dart';
 import 'package:estate/screens/authentication/signup_screen.dart';
 import 'package:estate/widgets/custom_widgets.dart';
@@ -28,12 +29,21 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
               print(val);
             },
             children: [
-              DemoScreen("WELCOME", "welcome1",
-                  "Showcase your property for sale. and find the buyer easily","NEXT >>"),
-              DemoScreen("OUR REACH", "welcome2",
-                  "Available in 3 major city Kathmandu ,Bhaktapur and Lalitpur","NEXT >>"),
               DemoScreen(
-                  "OTHER SERVICES", "welcome3", "Find Room and Flat to Rent","SKIP >>")
+                  "Find Your Dream House",
+                  "3",
+                  "Still searching for you dream house? Then you are at the right app.Search and Find your dream house on tip of your finger",
+                  "NEXT"),
+              DemoScreen(
+                  "Search For Affordable Office Space",
+                  "1",
+                  "Unable to find the perfect office space?Then you are at the right app.Search and Find the perfect space for your office",
+                  "NEXT"),
+              DemoScreen(
+                  "Find The Land, build your House",
+                  "2",
+                  "Seeking for the perfect Land to build house ?  search and find the perfect Land to built your house",
+                  "SKIP")
             ],
           ),
           Padding(
@@ -47,7 +57,7 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
                       width: 10,
                       height: 10,
                       decoration: BoxDecoration(
-                          color: selectedPage == 0 ? grey : white,
+                          color: selectedPage == 0 ? green : white,
                           shape: BoxShape.circle),
                     ),
                     HSpace(20),
@@ -55,7 +65,7 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
                       width: 10,
                       height: 10,
                       decoration: BoxDecoration(
-                          color: selectedPage == 1 ? grey : white,
+                          color: selectedPage == 1 ? green : white,
                           shape: BoxShape.circle),
                     ),
                     HSpace(20),
@@ -63,16 +73,16 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
                       width: 10,
                       height: 10,
                       decoration: BoxDecoration(
-                          color: selectedPage == 2 ? grey : white,
+                          color: selectedPage == 2 ? green : white,
                           shape: BoxShape.circle),
                     )
                   ],
                 ),
                 TextButton(
                     onPressed: () {
-                      gotoWithoutBack(context, OnBoardingScreen1());
+                      gotoWithoutBack(context, LogInScreen());
                     },
-                    child: nAppText("SKIP >>", 16, white))
+                    child: nAppText("SKIP", 16, black))
               ],
             ),
           )
@@ -81,36 +91,42 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
     );
   }
 
-  Widget DemoScreen(String title, String img, String content,String btnText) {
+  Widget DemoScreen(String title, String img, String content, String btnText) {
     return Container(
       width: fullWidth(context),
       height: fullHeight(context),
-      color: mc,
+      color: grey2,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                  fontSize: 35, fontWeight: FontWeight.bold, color: white),
-              textAlign: TextAlign.center,
-            ),
-            VSpace(20),
             Image.asset(
-              "assets/$img.png",
+              "assets/$img.jpeg",
               width: 300,
               height: 300,
             ),
             VSpace(20),
             Text(
-              content,
+              title,
               style: TextStyle(
-                  fontSize: 19, fontStyle: FontStyle.italic, color: white),
+                fontSize: 35,
+              ),
               textAlign: TextAlign.center,
             ),
+            VSpace(20),
+            Text(
+              content,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            VSpace(30),
+            SecondaryMaterialButton(() {
+              goOff(context, MainScreen());
+            }, "Get Started", 200),
           ],
         ),
       ),

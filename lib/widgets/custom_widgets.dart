@@ -61,21 +61,21 @@ goBack(BuildContext context) {
 Widget normalText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(fontSize: size, color: white),
+    style: TextStyle(fontSize: size,color: black),
   );
 }
 
 Widget boldText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(fontSize: size, fontWeight: FontWeight.bold, color: white),
+    style: TextStyle(fontSize: size, fontWeight: FontWeight.bold,color: black),
   );
 }
 
 Widget veryBoldText(String text, double size) {
   return Text(
     text,
-    style: TextStyle(fontSize: size, fontWeight: FontWeight.w900, color: white),
+    style: TextStyle(fontSize: size, fontWeight: FontWeight.w900,color: black),
     textAlign: TextAlign.center,
   );
 }
@@ -96,11 +96,11 @@ Widget bAppText(String text, double size, Color? color) {
 
 showSnackbar(BuildContext context, String content) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    backgroundColor: btnCol,
+    backgroundColor:grey2,
     margin: EdgeInsets.all(15),
     behavior: SnackBarBehavior.floating,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    content: nAppText(content, 15, Colors.white),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+    content: nAppText(content, 15, Colors.black),
   ));
 }
 
@@ -110,7 +110,7 @@ Widget PrimaryMaterialButton(
     minWidth: fullWidth(context),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     height: 45,
-    color: btnCol,
+    color: green,
     onPressed: () {
       fun();
     },
@@ -121,19 +121,19 @@ Widget PrimaryMaterialButton(
   );
 }
 
-Widget SecondaryMaterialButton(Function fun, String buttonText, Color? color,
-    double width, Color? textColor) {
+Widget SecondaryMaterialButton(Function fun, String buttonText,
+    double width) {
   return MaterialButton(
     minWidth: width,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-    height: 50,
-    color: color,
+    height: 45,
+    color: green,
     onPressed: () {
       fun();
     },
     child: Text(
       buttonText,
-      style: TextStyle(color: textColor, fontSize: 19),
+      style: TextStyle(color: white, fontSize: 18),
     ),
   );
 }
@@ -192,39 +192,29 @@ Widget DrawerItems(IconData icon, String title, Function fun) {
     onTap: () {
       fun();
     },
-    child: Column(
-      children: [
-        VSpace(2),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Icon(
-                    icon,
-                    color: white,
-                    size: 30,
-                  ),
-                  HSpace(10),
-                  boldText(title, 18),
-                ],
-              ),
               Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-                color: white,
+                icon,
+                color: black,
+                size: 25,
               ),
+              HSpace(10),
+              boldText(title, 17),
             ],
           ),
-        ),
-        VSpace(2),
-        Divider(
-          color: white,
-          thickness: 0.7,
-        )
-      ],
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 15,
+            color:black,
+          ),
+        ],
+      ),
     ),
   );
 }

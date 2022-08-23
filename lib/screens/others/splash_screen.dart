@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:estate/constants/colors.dart';
 import 'package:estate/screens/others/on_boarding_screen1.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: grey2,
       body: Container(
         child: Center(child: AppName(35, false)),
       ),

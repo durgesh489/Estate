@@ -38,8 +38,8 @@ class _SignUpScreenState extends State<LogInScreen> {
       if (user != null) {
         try {
           prefs!.setString("id", user.uid);
-          prefs!.setString("name", user.displayName??"unknown");
-          prefs!.setString("profile", user.photoURL??"unknown");
+          prefs!.setString("name", user.displayName??"");
+          prefs!.setString("profile", user.photoURL??"");
 
           prefs!.setString("email", emailController.text);
           prefs!.setString("password", pswrdController.text);
@@ -66,8 +66,8 @@ class _SignUpScreenState extends State<LogInScreen> {
     try {
       GoogleSignInAccount? user = await googleSignIn.signIn();
       prefs!.setString("id", user!.id);
-      prefs!.setString("name", user.displayName??"unknown");
-      prefs!.setString("profile", user.photoUrl??"inknown");
+      prefs!.setString("name", user.displayName??"");
+    
       prefs!.setString("email", emailController.text);
       prefs!.setString("password", pswrdController.text);
       prefs!.setBool("islogin", true);
@@ -80,7 +80,7 @@ class _SignUpScreenState extends State<LogInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mc,
+      backgroundColor: grey2,
       body: SafeArea(
         child: Container(
           width: fullWidth(context),
@@ -96,8 +96,8 @@ class _SignUpScreenState extends State<LogInScreen> {
                     VSpace(40),
                     Image.asset(
                       "assets/logo.png",
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                     ),
                     VSpace(40),
                     CustomTextField(
@@ -109,7 +109,7 @@ class _SignUpScreenState extends State<LogInScreen> {
                       hintText: "Enter Email",
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    VSpace(10),
+                    VSpace(20),
                     CustomTextField(
                       controller: pswrdController,
                       validators: [
@@ -121,20 +121,20 @@ class _SignUpScreenState extends State<LogInScreen> {
                       isPassword: true,
                     ),
 
-                    VSpace(20),
+                    VSpace(30),
                     showCPI
                         ? CircularProgressIndicator()
-                        : SecondaryMaterialButton(() {
+                        : PrimaryMaterialButton(context,() {
                             if (loginKey.currentState!.validate()) {
                               signInWithEmailAndPassword();
                             } else {
                               showSnackbar(
                                   context, "Pleasefill all fields correctly");
                             }
-                          }, "LOGIN", btnCol, 220, white),
+                          }, "LOGIN"),
 
                     VSpace(15),
-                    boldText("Or", 16),
+                    normalText("Or", 16),
                     VSpace(15),
                     MaterialButton(
                       minWidth: fullWidth(context),
@@ -158,17 +158,24 @@ class _SignUpScreenState extends State<LogInScreen> {
                       ),
                     ),
                     VSpace(10),
-                    TextButton(
-                        onPressed: () {
-                          goto(context, LogInScreen());
-                        },
-                        child: normalText("Forgot Password?", 18)),
+                   
                     // VSpace(10),
-                    TextButton(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        normalText("Don't have an Account ?", 17),
+                        TextButton(
+                            onPressed: () {
+                              goto(context, SignUpScreen());
+                            },
+                            child: nAppText("Sign Up", 17,green)),
+                      ],
+                    ),
+                     TextButton(
                         onPressed: () {
-                          goto(context, SignUpScreen());
+                          gotoWithoutBack(context, LogInScreen());
                         },
-                        child: normalText("Register?", 18)),
+                        child: nAppText("Forgot Password", 17,green)),
                   ],
                 ),
               ),

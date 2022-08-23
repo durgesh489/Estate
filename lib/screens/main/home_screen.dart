@@ -18,31 +18,91 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mc,
+      backgroundColor: grey2,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: normalText("Estate", 22),
-        actions: [
-          IconButton(
-            onPressed: () {
-             
-            },
-            icon: Icon(Icons.notifications_outlined,color: white,size: 30,),
-          )
-        ],
-      ),
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: boldText("Real Estate", 20),
+          ),
+          iconTheme: IconThemeData(color: black),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.chat_bubble_outline,
+                size: 27,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications_outlined,
+                size: 27,
+              ),
+            ),
+            HSpace(12),
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(50),
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    SizedBox(
+                      height: 55,
+                      width: fullWidth(context),
+                      child: Card(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                        shadowColor: black,
+                        color: white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ),
+                    TextField(
+                    
+                      textAlignVertical: TextAlignVertical.center,
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        // border: OutlineInputBorder(
+                        //     borderRadius: BorderRadius.circular(30),
+                        //     borderSide: BorderSide(color: black)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 35, vertical: 0),
+
+                        hintText: "Search Location...",
+                        suffixIcon: InkWell(
+                          onTap: () {
+                           
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 25),
+                            child: Image.asset(
+                              "assets/filter.png",
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+              ],
+            ),
+          ),
+        ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              CustomTextField(
-                controller: searchController,
-                validators: [],
-                hintText: "Search Home",
-              )
+            
 
               // VSpace(20),
               // Row(
