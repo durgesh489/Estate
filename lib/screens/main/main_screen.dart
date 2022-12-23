@@ -19,7 +19,6 @@ class _AllScreensState extends State<MainScreen> {
     HomeScreen(),
     CategoriesScreen(),
     FavoriteScreen(),
-    
     ProfileScreen(),
   ];
   int currentIndex = 0;

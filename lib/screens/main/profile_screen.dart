@@ -2,13 +2,16 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:estate/constants/colors.dart';
+import 'package:estate/dummy_screen.dart';
 import 'package:estate/main.dart';
 import 'package:estate/screens/authentication/login_screen.dart';
 import 'package:estate/screens/authentication/signup_screen.dart';
+import 'package:estate/screens/others/welcome_screen.dart';
 import 'package:estate/screens/profile/personal_information_screen.dart';
 import 'package:estate/services/auth_methods.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,6 +24,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+
+    print(prefs!.getString("profile"));
     return Scaffold(
       backgroundColor: grey2,
       body: SafeArea(
@@ -40,9 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Stack(
-                            overflow: Overflow.visible,
                             children: [
-                              prefs!.getString("profile") != null
+                              prefs!.getString("profile") != "unknown"&&prefs!.getString("profile") != null
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
                                       child: Image.file(
@@ -52,7 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         fit: BoxFit.cover,
                                       ),
                                     )
-                                  : Image.asset(
+                                  : 
+                                  Image.asset(
                                       "assets/person.png",
                                       width: 80,
                                       height: 80,
@@ -87,10 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     boldText(
-                                        prefs!
-                                            .getString("email")
-                                            .toString()
-                                            .replaceAll("@gmail.com", ""),
+                                        prefs!.getString("name") ?? "Unknown",
                                         18),
                                     VSpace(5),
                                     Text(
@@ -105,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 )
                               : Column(
                                   children: [
-                                    boldText("Welcome", 30),
+                                    boldText("Welcome", 25),
                                     Row(
                                       children: [
                                         MaterialButton(
@@ -113,17 +115,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(30)),
-                                          height: 35,
+                                          height: 30,
                                           color: green,
                                           onPressed: () {
                                             goOff(context, LogInScreen());
                                           },
-                                          child: bAppText("Login", 18, white),
+                                          child: bAppText("Login", 16, white),
                                         ),
-                                        HSpace(15),
+                                        HSpace(10),
                                         SizedBox(
                                           width: 100,
-                                          height: 35,
+                                          height: 30,
                                           child: OutlinedButton(
                                             style: OutlinedButton.styleFrom(
                                               side: BorderSide(color: black),
@@ -136,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               goOff(context, SignUpScreen());
                                             },
                                             child:
-                                                bAppText("Register", 18, black),
+                                                bAppText("Register", 16, black),
                                           ),
                                         )
                                       ],
@@ -156,18 +158,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          boldText("Account Setting", 20),
+                          boldText("Account Settings", 20),
                           VSpace(10),
                           DrawerItems(
-                              Icons.person_rounded, "Person Information", () {
+                              Icons.person_rounded, "Personal Information", () {
                             goto(context, PersonalInformationScreen());
                           }),
                           DrawerItems(Icons.notifications_outlined,
                               "Notifications", () {}),
-                          DrawerItems(Icons.lock_open_outlined,
-                              "Privacy and Security", () {}),
-                          DrawerItems(Icons.call, "Contact US", () {}),
-                          DrawerItems(Icons.info_outline, "About Us", () {}),
+                          DrawerItems(
+                              Icons.lock_open_outlined, "Privacy and Security",
+                              () {
+                            goto(context,
+                                DummyScreen(title: "Privacy and Security"));
+                          }),
+                          DrawerItems(Icons.call, "Contact Us", () {
+                            goto(context, DummyScreen(title: "Contact Us"));
+                          }),
+                          DrawerItems(Icons.info_outline, "About Us", () {
+                            goto(context, DummyScreen(title: "About Us"));
+                          }),
                         ],
                       ),
                     ),
@@ -182,9 +192,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           boldText("Help Support", 20),
                           VSpace(10),
-                          DrawerItems(Icons.help_outline, "Get Help", () {}),
-                          DrawerItems(Icons.feedback_outlined,
-                              "Give Us Feedback", () {}),
+                          DrawerItems(Icons.help_outline, "Get Help", () {
+                            goto(context, DummyScreen(title: "Get Help"));
+                          }),
+                          DrawerItems(
+                              Icons.feedback_outlined, "Give Us Feedback", () {
+                            goto(context,
+                                DummyScreen(title: "Give Us Feedback"));
+                          }),
                         ],
                       ),
                     ),
@@ -199,15 +214,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           boldText("Legal", 20),
                           VSpace(10),
-                          DrawerItems(
-                              Icons.assignment, "Terms and Condition", () {}),
-                          DrawerItems(
-                              Icons.policy_outlined, "Privacy Policy", () {}),
+                          DrawerItems(Icons.assignment, "Terms and Condition",
+                              () {
+                            goto(context,
+                                DummyScreen(title: "Terms and Condition"));
+                          }),
+                          DrawerItems(Icons.policy_outlined, "Privacy Policy",
+                              () {
+                            goto(context, DummyScreen(title: "Privacy Policy"));
+                          }),
                           DrawerItems(Icons.logout, "Log Out", () {
-                            AuthMethods().signOut().then((value) {
-                              prefs!.setBool("islogin", false);
-                              goOff(context, LogInScreen());
-                            });
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(
+                                      "Are you sure to Logout ?",
+                                      style: TextStyle(fontSize: 17),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            goBack(context);
+                                          },
+                                          child: Text("No")),
+                                      TextButton(
+                                          onPressed: () async{
+                                             await GoogleSignIn().signOut();
+                                            AuthMethods()
+                                                .signOut()
+                                                .then((value) {
+                                              prefs!.clear();
+                                              prefs!.setBool("islogin", false);
+                                             
+                                              goOff(context, WelcomeScreen());
+                                            });
+                                          },
+                                          child: Text("Yes")),
+                                    ],
+                                  );
+                                });
                           }),
                         ],
                       ),

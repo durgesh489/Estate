@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:estate/constants/colors.dart';
 import 'package:estate/main.dart';
+import 'package:estate/screens/main/chat_screen.dart';
 import 'package:estate/screens/main/land_screen.dart';
-import 'package:estate/screens/main/detail_screen.dart';
+import 'package:estate/screens/main/land_detail_screen.dart';
 import 'package:estate/screens/main/play_video_screen.dart';
 import 'package:estate/services/database_methods.dart';
+import 'package:estate/services/helper_functions.dart';
 import 'package:estate/widgets/custom_textfield.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -431,7 +433,7 @@ class _CategoriesScreenState extends State<FavoriteScreen> {
               }
             },
             child: Card(
-              elevation: 20,
+              elevation: 5,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100)),
               child: Padding(
@@ -459,7 +461,9 @@ class _CategoriesScreenState extends State<FavoriteScreen> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           height: 35,
           color: green,
-          onPressed: () {},
+          onPressed: () {
+            HelperFunction().makeCall();
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -483,7 +487,27 @@ class _CategoriesScreenState extends State<FavoriteScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30)),
             ),
-            onPressed: () {},
+            onPressed: () {
+              String chatRoomId = HelperFunction().getChatRoomIdByPhoneNumbers(
+                  prefs!.getString("id") ?? "", "AKLFWVc4IdcIotxet6QQKukRdQY2");
+              print(chatRoomId);
+              Map<String, dynamic> chatRoomInfoMap = {
+                "usersIds": [
+                  prefs!.getString("id") ?? "",
+                  "AKLFWVc4IdcIotxet6QQKukRdQY2"
+                ],
+                "ts": DateTime.now()
+              };
+              DatabaseMethods()
+                  .createChatRoom(chatRoomId, chatRoomInfoMap)
+                  .then((value) {
+                setState(() {});
+                goto(
+                    context,
+                    ChatScreen(prefs!.getString("id") ?? "",
+                        "AKLFWVc4IdcIotxet6QQKukRdQY2", chatRoomId));
+              });
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

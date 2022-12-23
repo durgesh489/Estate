@@ -1,4 +1,5 @@
 import 'package:estate/constants/colors.dart';
+import 'package:estate/main.dart';
 import 'package:estate/screens/authentication/login_screen.dart';
 import 'package:estate/screens/main/main_screen.dart';
 import 'package:estate/screens/others/on_boarding_screen1.dart';
@@ -125,6 +126,7 @@ class _OnBoardingScreen1State extends State<WelcomeScreen> {
             ),
             VSpace(30),
             SecondaryMaterialButton(() {
+              prefs!.setBool("islogin", true);
               goOff(context, MainScreen());
             }, "Get Started", 200),
           ],

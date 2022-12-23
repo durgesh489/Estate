@@ -20,7 +20,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController confirmPswrdController = TextEditingController();
   TextEditingController pswrdController = TextEditingController();
-   TextEditingController nameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   GlobalKey<FormState> signUpKey = GlobalKey<FormState>();
   bool showCPI = false;
   Future signUpWithEmailAndPassword() async {
@@ -32,12 +33,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           email: emailController.text, password: pswrdController.text);
       User? user = result.user;
       if (user != null) {
-         prefs!.setString("id", user.uid);
-          prefs!.setString("name", nameController.text);
-         
-          prefs!.setString("email", emailController.text);
-          prefs!.setString("password", pswrdController.text);
-          prefs!.setBool("islogin", true);
+        prefs!.setString("id", user.uid);
+        prefs!.setString("name", nameController.text);
+
+        prefs!.setString("email", emailController.text);
+        prefs!.setString("password", pswrdController.text);
+        prefs!.setString("phone", phoneController.text);
+        prefs!.setBool("islogin", true);
         DatabaseMethods().addUserInfoToDB(
             user.uid, {"email": emailController.text}).then((value) {
           goOff(context, MainScreen());
@@ -77,13 +79,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     VSpace(30),
                     CustomTextField(
-                      controller:nameController,
+                      controller: nameController,
                       validators: [
                         RequiredValidator(errorText: "This Field is Required"),
-                       
                       ],
                       hintText: "Enter Name",
-                  
+                    ),
+                    VSpace(10),
+                    CustomTextField(
+                      controller: phoneController,
+                      validators: [
+                        RequiredValidator(errorText: "This Field is Required"),
+                        MinLengthValidator(10, errorText: "Phone Number be should be 10 digits"),
+                        MaxLengthValidator(10, errorText: "Phone Number be should be 10 digits")
+                        
+                      ],
+                      hintText: "Enter Phone Number",
+                      keyboardType: TextInputType.phone,
                     ),
                     VSpace(10),
                     CustomTextField(
@@ -106,21 +118,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       hintText: "Enter Password",
                       isPassword: true,
                     ),
-                    VSpace(10),
-                    CustomTextField(
-                      controller: confirmPswrdController,
-                      validators: [
-                        RequiredValidator(errorText: "This Field is Required"),
-                        MinLengthValidator(8,
-                            errorText: "Password should be atleast 8 digits")
-                      ],
-                      hintText: "Confirm Password",
-                      isPassword: true,
-                    ),
+                   
                     VSpace(40),
                     showCPI
                         ? CircularProgressIndicator()
-                        : PrimaryMaterialButton(context,() {
+                        : PrimaryMaterialButton(context, () {
                             if (signUpKey.currentState!.validate() &&
                                 pswrdController.text.toString() ==
                                     confirmPswrdController.text.toString()) {
@@ -142,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onPressed: () {
                               gotoWithoutBack(context, LogInScreen());
                             },
-                            child: nAppText("Login", 17,green)),
+                            child: nAppText("Login", 17, green)),
                       ],
                     )
                   ],

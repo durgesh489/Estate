@@ -242,6 +242,7 @@ class _AllCategoriesScreenState extends State<LandScreen> {
                                                           PlayVideoScreeen(
                                                             videoUrl: ds[
                                                                 "land_video"],
+                                                                ds: ds,
                                                           ));
                                                     },
                                                     child: Image.asset(

@@ -1,18 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:estate/constants/colors.dart';
+import 'package:estate/services/helper_functions.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class DetailScreen extends StatefulWidget {
+class HouseDetailScreen extends StatefulWidget {
   final DocumentSnapshot ds;
-  const DetailScreen({Key? key, required this.ds}) : super(key: key);
+  const HouseDetailScreen({Key? key, required this.ds}) : super(key: key);
 
   @override
-  State<DetailScreen> createState() => _DetailScreenState();
+  State<HouseDetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends State<HouseDetailScreen> {
   int selectedImage = 0;
   @override
   void dispose() {
@@ -50,6 +51,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     Header2(),
                     Header3(),
                     Amenities(),
+                    Overview(),
                     Description(),
                   ],
                 ),
@@ -142,12 +144,18 @@ class _DetailScreenState extends State<DetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              normalText(
-                  "Land For " +
-                      widget.ds["sale_type"] +
-                      " At " +
-                      widget.ds["location"]["city"],
-                  18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  normalText(
+                      "Land For " +
+                          widget.ds["sale_type"] +
+                          " At " +
+                          widget.ds["location"]["city"],
+                      18),
+                  nAppText("#" + widget.ds["property_id"], 14, grey)
+                ],
+              ),
               VSpace(5),
               Text(
                 widget.ds["location"]["street"],
@@ -200,15 +208,111 @@ class _DetailScreenState extends State<DetailScreen> {
             children: [
               boldText("Details", 18),
               VSpace(10),
-              TableItem(
-                  "Property Face", widget.ds["more_details"]["property_face"]),
-              TableItem("Road Type", widget.ds["more_details"]["road_type"]),
-              TableItem(
-                  "Land Usability", widget.ds["more_details"]["land_usability"])
+              Row(
+                children: [
+                  Expanded(
+                    child: TableItem(
+                        "Property Type", widget.ds["details"]["property_type"]),
+                  ),
+                  Expanded(child: TableItem("Total Area", widget.ds["details"]["total_area"])),
+                  Expanded(child: TableItem("Road Size", widget.ds["details"]["road_size"])),
+                ],
+              ),
+              VSpace(10),
+              Row(
+                children: [
+                  Expanded(child: TableItem("Built Year", widget.ds["details"]["built_year"])),
+                  Expanded(child: TableItem("Total Floor", widget.ds["details"]["total_floor"])),
+                  Expanded(child: TableItem("Road Type", widget.ds["details"]["road_type"])),
+                ],
+              ),
+              VSpace(10),
+              Row(
+                children: [
+                  Expanded(child: TableItem("Furnished", widget.ds["details"]["furnished"])),
+                ],
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget Overview() {
+    return SizedBox(
+      width: fullWidth(context),
+      child: Card(
+        color: white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: BorderSide(color: Colors.black12)),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              boldText("Overview", 18),
+              VSpace(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OverviewItem("Bedroom", widget.ds["overview"]["bedroom"],
+                        "Bedroom"),
+                  ),
+                  Expanded(
+                    child: OverviewItem(
+                        "Bathroom", widget.ds["overview"]["bedroom"], "Shower"),
+                  ),
+                ],
+              ),
+              VSpace(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OverviewItem("Kitchen", widget.ds["overview"]["kitchen"],
+                        "Kitchen Room"),
+                  ),
+                  Expanded(
+                    child: OverviewItem("Living Room",
+                        widget.ds["overview"]["living_room"], "Living Room"),
+                  ),
+                ],
+              ),
+              VSpace(10),
+              Row(
+                children: [
+                  Expanded(
+                    child: OverviewItem("Floors", widget.ds["overview"]["floors"],
+                        "Stairs Up"),
+                  ),
+                  Expanded(
+                    child: OverviewItem("Parking", widget.ds["overview"]["parking"],
+                        "Parking1"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget OverviewItem(String title, String value, String img) {
+    return Row(
+      children: [
+        Image.asset("assets/$img.png"),
+        HSpace(15),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            normalText(title, 15),
+            VSpace(3),
+            boldText(value, 14),
+          ],
+        ),
+      ],
     );
   }
 
@@ -261,12 +365,13 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Widget TableItem(String title, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Row(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(flex: 3, child: normalText(title, 15)),
-          Expanded(flex: 1, child: normalText("-", 20)),
-          Expanded(flex: 2, child: boldText(value, 15))
+          normalText(title, 14),
+          VSpace(3),
+          boldText(value, 14),
         ],
       ),
     );
@@ -312,9 +417,11 @@ class _DetailScreenState extends State<DetailScreen> {
             // minWidth: 90,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            height: 45,
+            height: 40,
             color: green,
-            onPressed: () {},
+            onPressed: () {
+              HelperFunction().makeCall();
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -329,11 +436,11 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
         ),
-        HSpace(10),
+        HSpace(20),
         Expanded(
           child: SizedBox(
             // width: 90,
-            height: 45,
+            height: 40,
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: black),

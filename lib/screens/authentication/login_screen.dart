@@ -38,8 +38,8 @@ class _SignUpScreenState extends State<LogInScreen> {
       if (user != null) {
         try {
           prefs!.setString("id", user.uid);
-          prefs!.setString("name", user.displayName??"");
-          prefs!.setString("profile", user.photoURL??"");
+          prefs!.setString("name", user.displayName ?? "");
+          prefs!.setString("profile", user.photoURL ?? "");
 
           prefs!.setString("email", emailController.text);
           prefs!.setString("password", pswrdController.text);
@@ -66,10 +66,11 @@ class _SignUpScreenState extends State<LogInScreen> {
     try {
       GoogleSignInAccount? user = await googleSignIn.signIn();
       prefs!.setString("id", user!.id);
-      prefs!.setString("name", user.displayName??"");
-    
-      prefs!.setString("email", emailController.text);
-      prefs!.setString("password", pswrdController.text);
+      prefs!.setString("name", user.displayName ?? "");
+      // prefs!.setString("profile", user.photoUrl ?? "");
+      prefs!.setString("email", user.email);
+      
+
       prefs!.setBool("islogin", true);
       goOff(context, MainScreen());
     } catch (error) {
@@ -124,12 +125,12 @@ class _SignUpScreenState extends State<LogInScreen> {
                     VSpace(30),
                     showCPI
                         ? CircularProgressIndicator()
-                        : PrimaryMaterialButton(context,() {
+                        : PrimaryMaterialButton(context, () {
                             if (loginKey.currentState!.validate()) {
                               signInWithEmailAndPassword();
                             } else {
                               showSnackbar(
-                                  context, "Pleasefill all fields correctly");
+                                  context, "Please fill all fields correctly");
                             }
                           }, "LOGIN"),
 
@@ -158,7 +159,7 @@ class _SignUpScreenState extends State<LogInScreen> {
                       ),
                     ),
                     VSpace(10),
-                   
+
                     // VSpace(10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -168,14 +169,14 @@ class _SignUpScreenState extends State<LogInScreen> {
                             onPressed: () {
                               goto(context, SignUpScreen());
                             },
-                            child: nAppText("Sign Up", 17,green)),
+                            child: nAppText("Sign Up", 17, green)),
                       ],
                     ),
-                     TextButton(
+                    TextButton(
                         onPressed: () {
                           gotoWithoutBack(context, LogInScreen());
                         },
-                        child: nAppText("Forgot Password", 17,green)),
+                        child: nAppText("Forgot Password", 17, green)),
                   ],
                 ),
               ),

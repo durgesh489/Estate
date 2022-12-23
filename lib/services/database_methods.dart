@@ -82,7 +82,7 @@ class DatabaseMethods {
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("chats")
-        .orderBy("ls", descending: true)
+        .orderBy("ts", descending: true)
         .snapshots();
   }
 
@@ -99,15 +99,22 @@ class DatabaseMethods {
                 'z')
         .snapshots();
   }
+  // Future<Stream<QuerySnapshot>> searchCategoriesByPrice(
+  //     String colName) async {
+  //   return FirebaseFirestore.instance
+  //       .collection(colName)
+  //       .where("price",)
+        
+  // }
 
-  Future<Stream<QuerySnapshot>> searchCategoriesByPrice(
-      String colName, int price) async {
-    return FirebaseFirestore.instance
-        .collection(colName)
-        // .where("price", isGreaterThanOrEqualTo: price+100000)
-        .where("price", isLessThan: price)
-        .snapshots();
-  }
+  // Future<Stream<QuerySnapshot>> searchCategoriesByPrice(
+  //     String colName, int price) async {
+  //   return FirebaseFirestore.instance
+  //       .collection(colName)
+  //       // .where("price", isGreaterThanOrEqualTo: price+100000)
+  //       .where("price", isLessThan: price)
+  //       .snapshots();
+  // }
 
   Future<Stream<QuerySnapshot>> getCollection(String col) async {
     return FirebaseFirestore.instance.collection(col).snapshots();

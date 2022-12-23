@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:estate/constants/colors.dart';
 import 'package:estate/main.dart';
+import 'package:estate/screens/main/chat_screen.dart';
+import 'package:estate/screens/main/house_detail_screen.dart';
 import 'package:estate/screens/main/land_screen.dart';
-import 'package:estate/screens/main/detail_screen.dart';
+import 'package:estate/screens/main/land_detail_screen.dart';
 import 'package:estate/screens/main/play_video_screen.dart';
 import 'package:estate/services/database_methods.dart';
+import 'package:estate/services/helper_functions.dart';
 import 'package:estate/widgets/custom_textfield.dart';
 import 'package:estate/widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +30,15 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   double selectedPrice = 250000;
   TabController? tabController;
   // var categories;
-
+  bool isChatLoading = false;
   List<String> categories = ["Land", "House", "Room", "Hostel"];
   List<String> categoriesIcons = ["Field", "Apartment", "Room", "Bunk Bed"];
   TextEditingController searchController = TextEditingController();
+
+  int selectedType = 0;
+  int selectedRentalFrequency = 0;
+  bool isFilterApplied = false;
+  bool isPriceChanged = false;
 
   Future fetchCategories() async {
     lands = await DatabaseMethods().getCollection(categories[selected]);
@@ -59,84 +67,114 @@ class _CategoriesScreenState extends State<CategoriesScreen>
           automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: boldText("Real Estate", 20),
-          ),
+          // title: Padding(
+          //   padding: const EdgeInsets.only(left: 8.0),
+          //   child: boldText("Real Estate", 20),
+          // ),
           iconTheme: IconThemeData(color: black),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.chat_bubble_outline,
-                size: 27,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.notifications_outlined,
-                size: 27,
-              ),
-            ),
-            HSpace(12),
-          ],
+          // actions: [
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: Icon(
+          //       Icons.chat_bubble_outline,
+          //       size: 27,
+          //     ),
+          //   ),
+          //   IconButton(
+          //     onPressed: () {},
+          //     icon: Icon(
+          //       Icons.notifications_outlined,
+          //       size: 27,
+          //     ),
+          //   ),
+          //   HSpace(12),
+          // ],
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(110),
+            preferredSize: Size.fromHeight(90),
             child: Column(
               children: [
-                Stack(
-                  alignment: Alignment.centerLeft,
-                  children: [
-                    SizedBox(
-                      height: 55,
-                      width: fullWidth(context),
-                      child: Card(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                        shadowColor: black,
-                        color: white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                      ),
-                    ),
-                    TextField(
-                      onChanged: (val) async {
-                        if (val == "") {
-                          fetchCategories();
-                          setState(() {});
-                        } else {
-                          lands = await DatabaseMethods()
-                              .searchCategoriesByLocation(
-                                  categories[selected], val);
-                          setState(() {});
-                        }
-                      },
-                      textAlignVertical: TextAlignVertical.center,
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        // border: OutlineInputBorder(
-                        //     borderRadius: BorderRadius.circular(30),
-                        //     borderSide: BorderSide(color: black)),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 35, vertical: 0),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            SizedBox(
+                              height: 55,
+                              width: fullWidth(context),
+                              child: Card(
+                                shadowColor: black,
+                                color: white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15)),
+                              ),
+                            ),
+                            TextField(
+                              onChanged: (val) async {
+                                if (val == "") {
+                                  fetchCategories();
+                                  setState(() {});
+                                } else {
+                                  lands = await DatabaseMethods()
+                                      .searchCategoriesByLocation(
+                                          categories[selected], val);
+                                  setState(() {});
+                                }
+                              },
+                              // textAlignVertical: TextAlignVertical.center,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                // border: OutlineInputBorder(
+                                //     borderRadius: BorderRadius.circular(30),
+                                //     borderSide: BorderSide(color: black)),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 0),
 
-                        hintText: "Search Location...",
-                        suffixIcon: InkWell(
+                                hintText: "Search Location...",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 55,
+                        width: 55,
+                        child: InkWell(
                           onTap: () {
                             show();
                           },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 25),
-                            child: Image.asset(
-                              "assets/filter.png",
+                          child: Card(
+                            // margin: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                            shadowColor: black,
+                            color: white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Center(
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Image.asset(
+                                    "assets/filter.png",
+                                    width: 35,
+                                    height: 30,
+                                  ),
+                                  isFilterApplied
+                                      ? CircleAvatar(
+                                          backgroundColor: green,
+                                          radius: 5,
+                                        )
+                                      : SizedBox(),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 VSpace(8),
                 Padding(
@@ -155,6 +193,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         body: navs[selected]);
   }
 
+  AnimationController? animationController;
   //
   void show() {
     showBottomSheet(
@@ -166,20 +205,277 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         context: context,
         builder: (context) {
           return BottomSheet(
-              backgroundColor: mc,
+              onClosing: () {},
+              animationController: animationController,
+              enableDrag: true,
+              backgroundColor: white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
               ),
-              onClosing: () {
-                setState(() {});
-              },
               builder: (context) {
-                return BS(
-                  selectedPrice: selectedPrice,
-                  saleTypeIndex: saleTypeIndex,
-                );
+                return StatefulBuilder(builder: (context, state) {
+                  return Container(
+                    height: fullHeight(context) - 220,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            children: [
+                              boldText("Filter", 20),
+                              VSpace(10),
+                              Row(
+                                children: [
+                                  RoundedIcon(Icons.home_outlined),
+                                  HSpace(10),
+                                  boldText("Property Type", 16),
+                                ],
+                              ),
+                              VSpace(10),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: grey),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          state(() {
+                                            selectedType = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: selectedType == 0
+                                                ? Colors.green[200]
+                                                : white,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Center(
+                                              child: Text("RESIDENTIAL")),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          state(() {
+                                            selectedType = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: selectedType == 1
+                                                ? Colors.green[200]
+                                                : white,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child:
+                                              Center(child: Text("COMMERCIAL")),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              VSpace(15),
+                              Row(
+                                children: [
+                                  RoundedIcon(Icons.date_range),
+                                  HSpace(10),
+                                  boldText("Rental Frequency", 16),
+                                ],
+                              ),
+                              VSpace(10),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: grey),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          state(() {
+                                            selectedRentalFrequency = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: selectedRentalFrequency == 0
+                                                ? Colors.green[200]
+                                                : white,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Center(child: Text("YEARLY")),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          state(() {
+                                            selectedRentalFrequency = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: selectedRentalFrequency == 1
+                                                ? Colors.green[200]
+                                                : white,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Center(child: Text("MONTHLY")),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              VSpace(15),
+                              Row(
+                                children: [
+                                  RoundedIcon(Icons.local_offer),
+                                  HSpace(10),
+                                  boldText("Price Range", 16),
+                                ],
+                              ),
+                              Slider(
+                                divisions: 10,
+                                activeColor: green,
+                                thumbColor: green,
+                                min: 160000.0,
+                                max: 1000000.0,
+                                value: selectedPrice,
+                                onChanged: (double val) {
+                                  isPriceChanged = true;
+                                  selectedPrice = val;
+                                  print(val);
+                                  state(() {});
+                                },
+                              ),
+                              Text(selectedPrice.toString()),
+                              VSpace(10),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Expanded(
+                              //         child: InkWell(
+                              //             onTap: () {
+                              //               widget.saleTypeIndex = 0;
+                              //               setState(() {});
+                              //             },
+                              //             child: Padding(
+                              //               padding: const EdgeInsets.only(right: 10),
+                              //               child: Container(
+                              //                 height: 40,
+                              //                 decoration: BoxDecoration(
+                              //                     color: widget.saleTypeIndex == 0
+                              //                         ? Colors.cyan
+                              //                         : Colors.transparent,
+                              //                     borderRadius: BorderRadius.circular(10),
+                              //                     border: Border.all()),
+                              //                 child: Padding(
+                              //                   padding: const EdgeInsets.symmetric(
+                              //                     horizontal: 20,
+                              //                   ),
+                              //                   child: Center(
+                              //                     child: Text(
+                              //                       "For Sale",
+                              //                       style: TextStyle(fontSize: 16),
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ))),
+                              //     HSpace(20),
+                              //     Expanded(
+                              //         child: InkWell(
+                              //             onTap: () {
+                              //               widget.saleTypeIndex = 1;
+                              //               setState(() {});
+                              //             },
+                              //             child: Padding(
+                              //               padding: const EdgeInsets.only(right: 10),
+                              //               child: Container(
+                              //                 height: 40,
+                              //                 decoration: BoxDecoration(
+                              //                     color: widget.saleTypeIndex == 1
+                              //                         ? Colors.cyan
+                              //                         : Colors.transparent,
+                              //                     borderRadius: BorderRadius.circular(10),
+                              //                     border: Border.all()),
+                              //                 child: Padding(
+                              //                   padding: const EdgeInsets.symmetric(
+                              //                     horizontal: 20,
+                              //                   ),
+                              //                   child: Center(
+                              //                     child: Text(
+                              //                       "For Rent",
+                              //                       style: TextStyle(fontSize: 16),
+                              //                     ),
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ))),
+                              //   ],
+                              // ),
+                            ],
+                          ),
+                          PrimaryMaterialButton(context, () async {
+                            isFilterApplied = true;
+                            print(selectedPrice);
+                            print(selectedType);
+
+                            lands = await FirebaseFirestore.instance
+                                .collection("Land")
+                                .where("price",
+                                    isLessThan: selectedPrice.toInt())
+                                .where("details.property_type",
+                                    isEqualTo: selectedType == 0
+                                        ? "Residential"
+                                        : "Commercial")
+                                .snapshots();
+
+                            goBack(context);
+
+                            setState(() {});
+                          }, "Apply"),
+                          VSpace(5),
+                          TextButton(
+                              onPressed: () {
+                                isFilterApplied = false;
+                                fetchCategories();
+                                goBack(context);
+                              },
+                              child: nAppText("Reset", 18, Colors.blue))
+                        ],
+                      ),
+                    ),
+                  );
+                });
               });
         });
   }
@@ -223,6 +519,31 @@ class _CategoriesScreenState extends State<CategoriesScreen>
         ));
   }
 
+  Widget IconWithText(String icon, String title, Color? color) {
+    return Column(
+      children: [
+        Card(
+          elevation: 2,
+          color: white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: BorderSide(color: Colors.black12)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              "assets/$icon.png",
+              width: 25,
+              height: 25,
+              color: color,
+            ),
+          ),
+        ),
+        VSpace(4),
+        boldText(title, 15)
+      ],
+    );
+  }
+
   // Widget SaleType(String title, int index) {
   //   return ;
   // }
@@ -245,7 +566,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   Widget Lands() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: StreamBuilder(
           stream: lands,
           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -264,7 +585,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                               onTap: () {
                                 goto(
                                     context,
-                                    DetailScreen(
+                                    LandDetailScreen(
                                       ds: ds,
                                     ));
                               },
@@ -309,7 +630,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   Widget Houses() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: StreamBuilder(
           stream: lands,
           builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -325,7 +646,9 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                goto(context, HouseDetailScreen(ds: ds));
+                              },
                               child: Card(
                                 margin: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
@@ -422,13 +745,14 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   //
 
-  Widget VideoButton(String videoUrl) {
+  Widget VideoButton(String videoUrl, DocumentSnapshot ds) {
     return InkWell(
         onTap: () {
           goto(
               context,
               PlayVideoScreeen(
                 videoUrl: videoUrl,
+                ds: ds,
               ));
         },
         child: Container(
@@ -466,7 +790,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             nAppText(ds["location"]["city"], 17, black),
           ],
         ),
-        VideoButton(videoUrl)
+        VideoButton(videoUrl, ds)
       ],
     );
   }
@@ -475,10 +799,14 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconWithText("hospital", ds["nearest_landmarks"]["hospital"]),
-        IconWithText("school", ds["nearest_landmarks"]["hospital"]),
-        IconWithText("stop", ds["nearest_landmarks"]["bus_stop"]),
-        IconWithText("shopping", ds["nearest_landmarks"]["shopping_mart"]),
+        IconWithText(
+            "hospital", ds["nearest_landmarks"]["hospital"], Colors.grey[700]),
+        IconWithText(
+            "school", ds["nearest_landmarks"]["hospital"], Colors.grey[700]),
+        IconWithText(
+            "stop", ds["nearest_landmarks"]["bus_stop"], Colors.grey[700]),
+        IconWithText("shopping", ds["nearest_landmarks"]["shopping_mart"],
+            Colors.grey[700]),
       ],
     );
   }
@@ -575,7 +903,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                       }
                     },
                     child: Card(
-                      elevation: 20,
+                      elevation: 5,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100)),
                       child: Padding(
@@ -585,34 +913,71 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                               ? Icons.favorite
                               : Icons.favorite_outline,
                           size: 25,
-                          color: red,
+                          color: green,
                         ),
                       ),
                     ),
                   ),
-                  Card(
-                    elevation: 20,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Icon(
-                        Icons.call,
-                        size: 25,
-                        color: green,
+                  InkWell(
+                    onTap: () {
+                      HelperFunction().makeCall();
+                    },
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Icon(
+                          Icons.call,
+                          size: 25,
+                          color: green,
+                        ),
                       ),
                     ),
                   ),
-                  Card(
-                    elevation: 20,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Image.asset(
-                        "assets/chat.png",
-                        width: 25,
-                        height: 25,
+                  InkWell(
+                    onTap: () {
+                      // setState(() {
+                      //   isChatLoading = true;
+                      // });
+
+                      String chatRoomId = HelperFunction()
+                          .getChatRoomIdByPhoneNumbers(
+                              prefs!.getString("id") ?? "",
+                              "AKLFWVc4IdcIotxet6QQKukRdQY2");
+                      print(chatRoomId);
+                      Map<String, dynamic> chatRoomInfoMap = {
+                        "usersIds": [
+                          prefs!.getString("id") ?? "",
+                          "AKLFWVc4IdcIotxet6QQKukRdQY2"
+                        ],
+                        "ts": DateTime.now()
+                      };
+                      DatabaseMethods()
+                          .createChatRoom(chatRoomId, chatRoomInfoMap)
+                          .then((value) {
+                        setState(() {
+                          isChatLoading = false;
+                        });
+                        goto(
+                            context,
+                            ChatScreen(prefs!.getString("id") ?? "",
+                                "AKLFWVc4IdcIotxet6QQKukRdQY2", chatRoomId));
+                      });
+                    },
+                    child: Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Image.asset(
+                          "assets/chat.png",
+                          width: 25,
+                          height: 25,
+                          color: green,
+                        ),
                       ),
                     ),
                   )
@@ -662,142 +1027,57 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     );
   }
 
-  Widget IconWithText(String icon, String text) {
-    return Column(
-      children: [
-        Image.asset(
-          "assets/$icon.png",
-          color: Colors.black54,
-          width: 25,
-          height: 25,
-        ),
-        VSpace(5),
-        bAppText(text, 16, black)
-      ],
-    );
-  }
+//   Widget IconWithText(String icon, String text) {
+//     return Column(
+//       children: [
+//         Image.asset(
+//           "assets/$icon.png",
+//           color: Colors.black54,
+//           width: 25,
+//           height: 25,
+//         ),
+//         VSpace(5),
+//         bAppText(text, 16, black)
+//       ],
+//     );
+//   }
 }
 
-class BS extends StatefulWidget {
-  double selectedPrice;
-  int saleTypeIndex;
+// class BS extends StatefulWidget {
+//   double selectedPrice;
+//   int saleTypeIndex;
 
-  BS({
-    Key? key,
-    required this.selectedPrice,
-    required this.saleTypeIndex,
-  }) : super(key: key);
+//   BS({
+//     Key? key,
+//     required this.selectedPrice,
+//     required this.saleTypeIndex,
+//   }) : super(key: key);
 
-  @override
-  State<BS> createState() => _BSState();
-}
+//   @override
+//   State<BS> createState() => _BSState();
+// }
 
-class _BSState extends State<BS> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                boldText("Price: " + widget.selectedPrice.toString(), 20),
-                VSpace(5),
-                Slider(
-                  divisions: 10,
-                  activeColor: white,
-                  thumbColor: btnCol,
-                  min: 160000.0,
-                  max: 1000000.0,
-                  value: widget.selectedPrice,
-                  onChanged: (double val) {
-                    widget.selectedPrice = val;
-                    print(val);
-                    setState(() {});
-                  },
-                ),
-                VSpace(20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        child: InkWell(
-                            onTap: () {
-                              widget.saleTypeIndex = 0;
-                              setState(() {});
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: widget.saleTypeIndex == 0
-                                        ? btnCol
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: white)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "For Sale",
-                                      style:
-                                          TextStyle(color: white, fontSize: 16),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))),
-                    HSpace(20),
-                    Expanded(
-                        child: InkWell(
-                            onTap: () {
-                              widget.saleTypeIndex = 1;
-                              setState(() {});
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: widget.saleTypeIndex == 1
-                                        ? btnCol
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: white)),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "For Rent",
-                                      style:
-                                          TextStyle(color: white, fontSize: 16),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))),
-                  ],
-                ),
-              ],
-            ),
-            PrimaryMaterialButton(context, () async {
-              lands = await DatabaseMethods()
-                  .searchCategoriesByPrice("Land", widget.selectedPrice.toInt())
-                  .then((value) {
-                goBack(context);
-              });
-            }, "Apply")
-          ],
-        ),
+// class _BSState extends State<BS> {
+//   int selectedType = 0;
+//   int selectedRentalFrequency = 0;
+//   @override
+//   Widget build(BuildContext context) {
+//     return ;
+//   }
+
+Widget RoundedIcon(IconData icon) {
+  return Container(
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: grey2,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Icon(
+        icon,
+        size: 25,
+        color: green,
       ),
-    );
-  }
+    ),
+  );
 }
